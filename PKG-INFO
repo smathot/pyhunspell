@@ -1,8 +1,8 @@
 Metadata-Version: 1.2
 Name: hunspell
 Version: 0.2
-Author: Sayamindu Dasgupta
-Author-email: sayamindu at gmail com
+Author: Benoît Latinier
+Author-email: benoit@latinier.fr
 Home-page: http://github.com/blatinier/pyhunspell
 Download-url: UNKNOWN
 Summary: Module for the Hunspell spellchecker engine

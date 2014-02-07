@@ -21,16 +21,16 @@ along with PyHunspell.  If not, see <http://www.gnu.org/licenses/>.
 from distutils.core import setup, Extension
 
 main = Extension('hunspell',
-    define_macros = [('_LINUX',None)],
-    libraries = ['hunspell'],
-    include_dirs = ['/usr/include/hunspell'],
-    sources = ['hunspell.c'],
-    extra_compile_args = ['-Wall'])
+                 define_macros=[('_LINUX', None)],
+                 libraries=['hunspell'],
+                 include_dirs=['/usr/include/hunspell'],
+                 sources=['hunspell.c'],
+                 extra_compile_args=['-Wall'])
 
-setup(name = "hunspell",
-    version = "0.2",
-    description = "Module for the Hunspell spellchecker engine",
-    author="Sayamindu Dasgupta",
-    author_email="sayamindu@gmail.com",
-    url="http://github.com/blatinier/pyhunspell",
-    ext_modules = [main])
+setup(name="hunspell",
+      version="0.2",
+      description="Module for the Hunspell spellchecker engine",
+      author="Benoît Latinier",
+      author_email="benoit@latinier.fr",
+      url="http://github.com/blatinier/pyhunspell",
+      ext_modules=[main])
