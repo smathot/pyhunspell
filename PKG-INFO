@@ -1,0 +1,11 @@
+Metadata-Version: 1.2
+Name: hunspell
+Version: 0.2
+Author: Sayamindu Dasgupta
+Author-email: sayamindu at gmail com
+Home-page: http://github.com/blatinier/pyhunspell
+Download-url: UNKNOWN
+Summary: Module for the Hunspell spellchecker engine
+License: GPL3
+Description: UNKNOWN
+Platform: UNKNOWN
