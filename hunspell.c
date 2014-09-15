@@ -32,19 +32,29 @@
 
 typedef struct {
 	PyObject_HEAD 
-    Hunhandle *handle;
+	Hunhandle *handle;
+	const char *encoding;
 } HunSpell;
 
 static int
 HunSpell_init(HunSpell * self, PyObject *args, PyObject *kwds)
 {
-	char *dpath;
-	char *apath;
+	PyObject *dpath;
+	PyObject *apath;
 
-	if (!PyArg_ParseTuple(args, "ss", &dpath, &apath))
+#if PY_VERSION_HEX < 0x03010000
+	if (!PyArg_ParseTuple(args, "etet", Py_FileSystemDefaultEncoding, &dpath, Py_FileSystemDefaultEncoding, &apath))
+#else
+	if (!PyArg_ParseTuple(args, "O&O&", PyUnicode_FSConverter, &dpath, PyUnicode_FSConverter, &apath))
+#endif
 		return 1;
 
-	self->handle = Hunspell_create(apath, dpath);
+	self->handle = Hunspell_create(PyBytes_AsString(apath), PyBytes_AsString(dpath));
+	self->encoding = Hunspell_get_dic_encoding(self->handle);
+
+	Py_DECREF(dpath);
+	Py_DECREF(apath);
+
 	return 0;
 }
 
@@ -58,7 +68,7 @@ HunSpell_dealloc(HunSpell * self)
 static PyObject *
 HunSpell_get_dic_encoding(HunSpell * self, PyObject *args)
 {
-	return Py_BuildValue("s", Hunspell_get_dic_encoding(self->handle));
+	return Py_BuildValue("s", self->encoding);
 }
 
 static PyObject *
@@ -67,9 +77,10 @@ HunSpell_spell(HunSpell * self, PyObject *args)
 	char *word;
 	int retvalue;
 
-	if (!PyArg_ParseTuple(args, "s", &word))
+	if (!PyArg_ParseTuple(args, "et", self->encoding, &word))
 		return NULL;
 	retvalue = Hunspell_spell(self->handle, word);
+	PyMem_Free(word);
 
 	return PyBool_FromLong(retvalue);
 }
@@ -82,11 +93,12 @@ HunSpell_suggest(HunSpell * self, PyObject *args)
 	int i, num_slist;
 	PyObject *slist_list;
 
-	if (!PyArg_ParseTuple(args, "s", &word))
+	if (!PyArg_ParseTuple(args, "et", self->encoding, &word))
 		return NULL;
 
 	slist_list = PyList_New(0);
 	num_slist = Hunspell_suggest(self->handle, &slist, word);
+	PyMem_Free(word);
 
 	for (i = 0; i < num_slist; i++) {
 		PyList_Append(slist_list, Py_BuildValue("s", slist[i]));
@@ -103,11 +115,12 @@ HunSpell_analyze(HunSpell * self, PyObject *args)
 	int i, num_slist;
 	PyObject *slist_list;
 
-	if (!PyArg_ParseTuple(args, "s", &word))
+	if (!PyArg_ParseTuple(args, "et", self->encoding, &word))
 		return NULL;
 
 	slist_list = PyList_New(0);
 	num_slist = Hunspell_analyze(self->handle, &slist, word);
+	PyMem_Free(word);
 
 	for (i = 0; i < num_slist; i++) {
 		PyList_Append(slist_list, Py_BuildValue("s", slist[i]));
@@ -124,11 +137,12 @@ HunSpell_stem(HunSpell * self, PyObject *args)
 	int i, num_slist;
 	PyObject *slist_list;
 
-	if (!PyArg_ParseTuple(args, "s", &word))
+	if (!PyArg_ParseTuple(args, "et", self->encoding, &word))
 		return NULL;
 
 	slist_list = PyList_New(0);
 	num_slist = Hunspell_stem(self->handle, &slist, word);
+	PyMem_Free(word);
 
 	for (i = 0; i < num_slist; i++) {
 		PyList_Append(slist_list, Py_BuildValue("s", slist[i]));
@@ -145,11 +159,13 @@ HunSpell_generate(HunSpell * self, PyObject *args)
 	int i, num_slist;
 	PyObject *slist_list;
 
-	if (!PyArg_ParseTuple(args, "ss", &word1, &word2))
+	if (!PyArg_ParseTuple(args, "etet", self->encoding, &word1, self->encoding, &word2))
 		return NULL;
 
 	slist_list = PyList_New(0);
 	num_slist = Hunspell_generate(self->handle, &slist, word1, word2);
+	PyMem_Free(word1);
+	PyMem_Free(word2);
 
 	for (i = 0; i < num_slist; i++) {
 		PyList_Append(slist_list, Py_BuildValue("s", slist[i]));
@@ -165,9 +181,10 @@ HunSpell_add(HunSpell * self, PyObject *args)
 	char *word;
 	int retvalue;
 
-	if (!PyArg_ParseTuple(args, "s", &word))
+	if (!PyArg_ParseTuple(args, "et", self->encoding, &word))
 		return NULL;
 	retvalue = Hunspell_add(self->handle, word);
+	PyMem_Free(word);
 
 	return Py_BuildValue("i", retvalue);
 }
@@ -178,9 +195,11 @@ HunSpell_add_with_affix(HunSpell * self, PyObject *args)
 	char *word, *example;
 	int retvalue;
 
-	if (!PyArg_ParseTuple(args, "ss", &word, &example))
+	if (!PyArg_ParseTuple(args, "etet", self->encoding, &word, self->encoding, &example))
 		return NULL;
 	retvalue = Hunspell_add_with_affix(self->handle, word, example);
+	PyMem_Free(word);
+	PyMem_Free(example);
 
 	return Py_BuildValue("i", retvalue);
 }
@@ -191,9 +210,10 @@ HunSpell_remove(HunSpell * self, PyObject *args)
 	char *word;
 	int retvalue;
 
-	if (!PyArg_ParseTuple(args, "s", &word))
+	if (!PyArg_ParseTuple(args, "et", self->encoding, &word))
 		return NULL;
 	retvalue = Hunspell_remove(self->handle, word);
+	PyMem_Free(word);
 
 	return Py_BuildValue("i", retvalue);
 }
