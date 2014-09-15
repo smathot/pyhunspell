@@ -20,6 +20,10 @@
 #include <Python.h>
 #include <hunspell.h>
 
+#ifndef PyVarObject_HEAD_INIT
+	#define PyVarObject_HEAD_INIT(type, size) PyObject_HEAD_INIT(type) size,
+#endif
+
 
 /****************************************
                 HunSpell
@@ -48,7 +52,7 @@ static void
 HunSpell_dealloc(HunSpell * self)
 {
 	Hunspell_destroy(self->handle);
-	self->ob_type->tp_free((PyObject *)self);
+	Py_TYPE(self)->tp_free((PyObject *)self);
 }
 
 static PyObject *
@@ -219,8 +223,7 @@ static PyMethodDef HunSpell_methods[] = {
 };
 
 static PyTypeObject HunSpellType = {
-	PyObject_HEAD_INIT(NULL)
-	0,		/* ob_size */
+	PyVarObject_HEAD_INIT(NULL, 0)
 	"HunSpell",		/* tp_name */
 	sizeof(HunSpell),	/* tp_basicsize */
 	0,			/* tp_itemsize */
@@ -260,28 +263,42 @@ static PyTypeObject HunSpellType = {
 	0,			/* tp_new */
 };
 
-
+#if PY_MAJOR_VERSION >= 3
+static struct PyModuleDef hunspellmodule = {
+	PyModuleDef_HEAD_INIT,
+	"hunspell",	/* name of module */
+	NULL,		/* module documentation, may be NULL */
+	-1, /* TODO */	/* size of per-interpreter state of the module,
+			   or -1 if the module keeps state in global variables. */
+	HunSpell_methods
+};
+#endif
 
 /******************** Module Initialization function ****************/
 
-void
-inithunspell(void)
+PyObject*
+PyInit_hunspell(void)
 {
 	PyObject *mod;
 
 	// Create the module
+#if PY_MAJOR_VERSION >= 3
+	mod = PyModule_Create(&hunspellmodule);
+#else
 	mod = Py_InitModule3("hunspell", NULL,
 			     "An extension for the Hunspell spell checker engine");
+#endif
 	if (mod == NULL) {
-		return;
+		return NULL;
 	}
 
 	// Fill in some slots in the type, and make it ready
 	HunSpellType.tp_new = PyType_GenericNew;
 	if (PyType_Ready(&HunSpellType) < 0) {
-		return;
+		return NULL;
 	}
 	// Add the type to the module.
 	Py_INCREF(&HunSpellType);
 	PyModule_AddObject(mod, "HunSpell", (PyObject *)&HunSpellType);
+	return mod;
 }
