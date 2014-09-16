@@ -28,7 +28,7 @@ main = Extension('hunspell',
                  extra_compile_args=['-Wall'])
 
 setup(name="hunspell",
-      version="0.2.1",
+      version="0.3.0",
       description="Module for the Hunspell spellchecker engine",
       author="Benoît Latinier",
       author_email="benoit@latinier.fr",
