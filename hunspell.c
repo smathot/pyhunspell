@@ -29,6 +29,7 @@
                 HunSpell
 ****************************************/
 
+static PyObject *HunSpellError;
 
 typedef struct {
 	PyObject_HEAD 
@@ -41,6 +42,7 @@ HunSpell_init(HunSpell * self, PyObject *args, PyObject *kwds)
 {
 	PyObject *dpath;
 	PyObject *apath;
+    FILE *fh;
 
 #if PY_VERSION_HEX < 0x03010000
 	if (!PyArg_ParseTuple(args, "etet", Py_FileSystemDefaultEncoding, &dpath, Py_FileSystemDefaultEncoding, &apath))
@@ -49,7 +51,30 @@ HunSpell_init(HunSpell * self, PyObject *args, PyObject *kwds)
 #endif
 		return 1;
 
+    /* Some versions of Hunspell_create() will succeed even if
+    * there are no dictionary files. So test for permissions.
+    */
+    fh = fopen(dpath, "r");
+    if (fh) {
+        fclose(fh);
+    } else {
+        PyErr_SetFromErrno(HunSpellError);
+        return -1;
+    }
+
+    fh = fopen(apath, "r");
+    if (fh) {
+        fclose(fh);
+    } else {
+        PyErr_SetFromErrno(HunSpellError);
+        return -1;
+    }
+
 	self->handle = Hunspell_create(PyBytes_AsString(apath), PyBytes_AsString(dpath));
+    if(!self->handle) {
+        PyErr_SetString(HunSpellError, "Cannot open dictionary");
+        return -1;
+    }
 	self->encoding = Hunspell_get_dic_encoding(self->handle);
 
 	Py_DECREF(dpath);
@@ -316,6 +341,8 @@ PyInit_hunspell(void)
 	// Add the type to the module.
 	Py_INCREF(&HunSpellType);
 	PyModule_AddObject(mod, "HunSpell", (PyObject *)&HunSpellType);
+    HunSpellError = PyErr_NewException("hunspell.error", NULL, NULL);
+    Py_INCREF(HunSpellError);
 	return mod;
 }
 #else
@@ -339,6 +366,8 @@ inithunspell(void)
 	// Add the type to the module.
 	Py_INCREF(&HunSpellType);
 	PyModule_AddObject(mod, "HunSpell", (PyObject *)&HunSpellType);
+    HunSpellError = PyErr_NewException("hunspell.error", NULL, NULL);
+    Py_INCREF(HunSpellError);
 	return mod;
 }
 #endif
