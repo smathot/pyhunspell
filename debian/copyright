@@ -5,9 +5,9 @@ Source: https://github.com/smathot/pyhunspell
 
 Files: *
 Copyright: 2010-2012, Sayamindu Dasgupta
-License: GPL-3
+License: LGPL-3
  On Debian systems, the full text of the GNU General Public License version 3
- can be found in the file `/usr/share/common-licenses/GPL-3'.
+ can be found in the file `/usr/share/common-licenses/LGPL-3'.
 
 Files: debian/*
 Copyright: 2012, Sebastiaan Mathot <s.mathot@cogsci.nl>
