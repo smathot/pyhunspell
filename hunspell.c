@@ -115,18 +115,25 @@ static PyObject *
 HunSpell_suggest(HunSpell * self, PyObject *args)
 {
 	char *word, **slist;
-	int i, num_slist;
-	PyObject *slist_list;
+	int i, num_slist, ret;
+	PyObject *slist_list, *pystr;
 
 	if (!PyArg_ParseTuple(args, "et", self->encoding, &word))
 		return NULL;
 
 	slist_list = PyList_New(0);
+    if (!slist_list) {
+        return NULL;
+    }
 	num_slist = Hunspell_suggest(self->handle, &slist, word);
 	PyMem_Free(word);
 
-	for (i = 0; i < num_slist; i++) {
-		PyList_Append(slist_list, Py_BuildValue("s", slist[i]));
+	for (i = 0, ret = 0; !ret && i < num_slist; i++) {
+        pystr = PyString_FromString(slist[i]);
+        if (!pystr)
+            break;
+        ret = PyList_Append(slist_list, pystr);
+        Py_DECREF(pystr);
 	}
 
 	Hunspell_free_list(self->handle, &slist, num_slist);
@@ -137,18 +144,25 @@ static PyObject *
 HunSpell_analyze(HunSpell * self, PyObject *args)
 {
 	char *word, **slist;
-	int i, num_slist;
-	PyObject *slist_list;
+	int i, num_slist, ret;
+	PyObject *slist_list, *pystr;
 
 	if (!PyArg_ParseTuple(args, "et", self->encoding, &word))
 		return NULL;
 
 	slist_list = PyList_New(0);
+    if (!slist_list) {
+        return NULL;
+    }
 	num_slist = Hunspell_analyze(self->handle, &slist, word);
 	PyMem_Free(word);
 
-	for (i = 0; i < num_slist; i++) {
-		PyList_Append(slist_list, Py_BuildValue("s", slist[i]));
+	for (i = 0, ret = 0; !ret && i < num_slist; i++) {
+        pystr = PyString_FromString(slist[i]);
+        if (!pystr)
+            break;
+        ret = PyList_Append(slist_list, pystr);
+        Py_DECREF(pystr);
 	}
 
 	Hunspell_free_list(self->handle, &slist, num_slist);
@@ -159,18 +173,25 @@ static PyObject *
 HunSpell_stem(HunSpell * self, PyObject *args)
 {
 	char *word, **slist;
-	int i, num_slist;
-	PyObject *slist_list;
+	int i, num_slist, ret;
+	PyObject *slist_list, *pystr;
 
 	if (!PyArg_ParseTuple(args, "et", self->encoding, &word))
 		return NULL;
 
 	slist_list = PyList_New(0);
+    if (!slist_list) {
+        return NULL;
+    }
 	num_slist = Hunspell_stem(self->handle, &slist, word);
 	PyMem_Free(word);
 
-	for (i = 0; i < num_slist; i++) {
-		PyList_Append(slist_list, Py_BuildValue("s", slist[i]));
+	for (i = 0, ret = 0; !ret && i < num_slist; i++) {
+        pystr = PyString_FromString(slist[i]);
+        if (!pystr)
+            break;
+        ret = PyList_Append(slist_list, pystr);
+        Py_DECREF(pystr);
 	}
 
 	Hunspell_free_list(self->handle, &slist, num_slist);
@@ -181,19 +202,26 @@ static PyObject *
 HunSpell_generate(HunSpell * self, PyObject *args)
 {
 	char *word1, *word2, **slist;
-	int i, num_slist;
-	PyObject *slist_list;
+	int i, num_slist, ret;
+	PyObject *slist_list, *pystr;
 
 	if (!PyArg_ParseTuple(args, "etet", self->encoding, &word1, self->encoding, &word2))
 		return NULL;
 
 	slist_list = PyList_New(0);
+    if (!slist_list) {
+        return NULL;
+    }
 	num_slist = Hunspell_generate(self->handle, &slist, word1, word2);
 	PyMem_Free(word1);
 	PyMem_Free(word2);
 
-	for (i = 0; i < num_slist; i++) {
-		PyList_Append(slist_list, Py_BuildValue("s", slist[i]));
+	for (i = 0, ret = 0; !ret && i < num_slist; i++) {
+        pystr = PyString_FromString(slist[i]);
+        if (!pystr)
+            break;
+        ret = PyList_Append(slist_list, pystr);
+        Py_DECREF(pystr);
 	}
 
 	Hunspell_free_list(self->handle, &slist, num_slist);
@@ -211,7 +239,7 @@ HunSpell_add(HunSpell * self, PyObject *args)
 	retvalue = Hunspell_add(self->handle, word);
 	PyMem_Free(word);
 
-	return Py_BuildValue("i", retvalue);
+	return PyInt_FromLong(retvalue);
 }
 
 static PyObject *
@@ -226,7 +254,7 @@ HunSpell_add_with_affix(HunSpell * self, PyObject *args)
 	PyMem_Free(word);
 	PyMem_Free(example);
 
-	return Py_BuildValue("i", retvalue);
+	return PyInt_FromLong(retvalue);
 }
 
 static PyObject *
@@ -240,7 +268,7 @@ HunSpell_remove(HunSpell * self, PyObject *args)
 	retvalue = Hunspell_remove(self->handle, word);
 	PyMem_Free(word);
 
-	return Py_BuildValue("i", retvalue);
+	return PyInt_FromLong(retvalue);
 }
 
 static PyMethodDef HunSpell_methods[] = {
