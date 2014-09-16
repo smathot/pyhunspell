@@ -296,18 +296,14 @@ static struct PyModuleDef hunspellmodule = {
 
 /******************** Module Initialization function ****************/
 
+#if PY_MAJOR_VERSION >= 3
 PyObject*
 PyInit_hunspell(void)
 {
 	PyObject *mod;
 
 	// Create the module
-#if PY_MAJOR_VERSION >= 3
 	mod = PyModule_Create(&hunspellmodule);
-#else
-	mod = Py_InitModule3("hunspell", NULL,
-			     "An extension for the Hunspell spell checker engine");
-#endif
 	if (mod == NULL) {
 		return NULL;
 	}
@@ -322,3 +318,27 @@ PyInit_hunspell(void)
 	PyModule_AddObject(mod, "HunSpell", (PyObject *)&HunSpellType);
 	return mod;
 }
+#else
+PyObject*
+inithunspell(void)
+{
+	PyObject *mod;
+
+	// Create the module
+	mod = Py_InitModule3("hunspell", NULL,
+			     "An extension for the Hunspell spell checker engine");
+	if (mod == NULL) {
+		return NULL;
+	}
+
+	// Fill in some slots in the type, and make it ready
+	HunSpellType.tp_new = PyType_GenericNew;
+	if (PyType_Ready(&HunSpellType) < 0) {
+		return NULL;
+	}
+	// Add the type to the module.
+	Py_INCREF(&HunSpellType);
+	PyModule_AddObject(mod, "HunSpell", (PyObject *)&HunSpellType);
+	return mod;
+}
+#endif
