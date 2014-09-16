@@ -17,9 +17,6 @@ following command as root to install pyhunspell:
 
 LICENSE
 =======
-It's not entirely clear under which license PyHunspell is released. On the
-homepage it says LGPL, but in the source it says GPL. Since I believe the source
-has precedence, I will release this under GPL until the original tells me to do
-otherwise. For the full license, see COPYING.
-
-* <http://www.gnu.org/licenses/gpl.html>
+PyHunspell itself is licensed under the LGPL version 3 or later, see
+lgpl-3.0.txt and gpl-3.0.txt. The files in the debian/ directory and setup.py
+are licensed under the GPL version 3.
