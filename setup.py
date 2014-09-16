@@ -33,4 +33,5 @@ setup(name="hunspell",
       author="Benoît Latinier",
       author_email="benoit@latinier.fr",
       url="http://github.com/blatinier/pyhunspell",
-      ext_modules=[main])
+      ext_modules=[main],
+      license="LGPLv3")
