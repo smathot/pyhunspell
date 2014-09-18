@@ -20,8 +20,15 @@
 #include <Python.h>
 #include <hunspell.h>
 
+
 #ifndef PyVarObject_HEAD_INIT
 	#define PyVarObject_HEAD_INIT(type, size) PyObject_HEAD_INIT(type) size,
+#endif
+
+// Compatibility python3 defines for python2
+#if PY_MAJOR_VERSION < 3
+	#define PyInt_FromLong PyLong_FromLong
+	#define PyBytes_FromString  PyString_FromString
 #endif
 
 
@@ -129,11 +136,11 @@ HunSpell_suggest(HunSpell * self, PyObject *args)
 	PyMem_Free(word);
 
 	for (i = 0, ret = 0; !ret && i < num_slist; i++) {
-        pystr = PyString_FromString(slist[i]);
-        if (!pystr)
-            break;
-        ret = PyList_Append(slist_list, pystr);
-        Py_DECREF(pystr);
+		pystr = PyBytes_FromString(slist[i]);
+		if (!pystr)
+			break;
+		ret = PyList_Append(slist_list, pystr);
+		Py_DECREF(pystr);
 	}
 
 	Hunspell_free_list(self->handle, &slist, num_slist);
@@ -158,11 +165,11 @@ HunSpell_analyze(HunSpell * self, PyObject *args)
 	PyMem_Free(word);
 
 	for (i = 0, ret = 0; !ret && i < num_slist; i++) {
-        pystr = PyString_FromString(slist[i]);
-        if (!pystr)
-            break;
-        ret = PyList_Append(slist_list, pystr);
-        Py_DECREF(pystr);
+		pystr = PyBytes_FromString(slist[i]);
+		if (!pystr)
+			break;
+		ret = PyList_Append(slist_list, pystr);
+		Py_DECREF(pystr);
 	}
 
 	Hunspell_free_list(self->handle, &slist, num_slist);
@@ -187,11 +194,11 @@ HunSpell_stem(HunSpell * self, PyObject *args)
 	PyMem_Free(word);
 
 	for (i = 0, ret = 0; !ret && i < num_slist; i++) {
-        pystr = PyString_FromString(slist[i]);
-        if (!pystr)
-            break;
-        ret = PyList_Append(slist_list, pystr);
-        Py_DECREF(pystr);
+		pystr = PyBytes_FromString(slist[i]);	
+		if (!pystr)
+			break;
+		ret = PyList_Append(slist_list, pystr);
+		Py_DECREF(pystr);
 	}
 
 	Hunspell_free_list(self->handle, &slist, num_slist);
@@ -217,11 +224,11 @@ HunSpell_generate(HunSpell * self, PyObject *args)
 	PyMem_Free(word2);
 
 	for (i = 0, ret = 0; !ret && i < num_slist; i++) {
-        pystr = PyString_FromString(slist[i]);
-        if (!pystr)
-            break;
-        ret = PyList_Append(slist_list, pystr);
-        Py_DECREF(pystr);
+		pystr = PyBytes_FromString(slist[i]);
+		if (!pystr)
+			break;
+		ret = PyList_Append(slist_list, pystr);
+		Py_DECREF(pystr);
 	}
 
 	Hunspell_free_list(self->handle, &slist, num_slist);
@@ -239,7 +246,7 @@ HunSpell_add(HunSpell * self, PyObject *args)
 	retvalue = Hunspell_add(self->handle, word);
 	PyMem_Free(word);
 
-	return PyInt_FromLong(retvalue);
+	return PyLong_FromLong(retvalue);
 }
 
 static PyObject *
@@ -254,7 +261,7 @@ HunSpell_add_with_affix(HunSpell * self, PyObject *args)
 	PyMem_Free(word);
 	PyMem_Free(example);
 
-	return PyInt_FromLong(retvalue);
+	return PyLong_FromLong(retvalue);
 }
 
 static PyObject *
@@ -268,7 +275,7 @@ HunSpell_remove(HunSpell * self, PyObject *args)
 	retvalue = Hunspell_remove(self->handle, word);
 	PyMem_Free(word);
 
-	return PyInt_FromLong(retvalue);
+	return PyLong_FromLong(retvalue);
 }
 
 static PyMethodDef HunSpell_methods[] = {
