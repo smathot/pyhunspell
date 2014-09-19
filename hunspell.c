@@ -25,11 +25,11 @@
 	#define PyVarObject_HEAD_INIT(type, size) PyObject_HEAD_INIT(type) size,
 #endif
 
-// Compatibility python3 defines for python2
+/* Compatibility python3 defines for python2 */
 #if PY_MAJOR_VERSION < 3
 	#define PyInt_FromLong PyLong_FromLong
-	#define PyBytes_FromString  PyString_FromString	
-#endif // PY_MAJOR_VERSION < 3
+	#define PyBytes_FromString  PyString_FromString
+#endif /* PY_MAJOR_VERSION < 3 */
 
 
 /****************************************
@@ -47,239 +47,239 @@ typedef struct {
 static int
 HunSpell_init(HunSpell * self, PyObject *args, PyObject *kwds)
 {
-	PyObject *dpath = NULL; // PyBytes in py3 PyString in py2
-	PyObject *apath = NULL;  
-	FILE *fh;
-	
-#if PY_VERSION_HEX < 0x03010000
-	// TODO: Please review if there is any shorter/nicer;less clumsy way to convert args to  PyStrings using Py_FileSystemDefaultEncoding in python 2.x
-	const char * dpath_ptr = NULL;
-	const char * apath_ptr = NULL;
-	if (!PyArg_ParseTuple(args, "etet", Py_FileSystemDefaultEncoding, &dpath_ptr, Py_FileSystemDefaultEncoding, &apath_ptr))
-		return 1;
-	dpath =  PyString_FromString(dpath_ptr);
-	apath =  PyString_FromString(apath_ptr);
-#else
-	if (!PyArg_ParseTuple(args, "O&O&", PyUnicode_FSConverter, &dpath, PyUnicode_FSConverter, &apath))
-		return 1;
-#endif
-	/* Some versions of Hunspell_create() will succeed even if
-	* there are no dictionary files. So test for permissions.
-	*/
-	// TODO: consider  _Py_fopen for py3.x here ?
-	fh = fopen(PyBytes_AsString(dpath), "r");
-	if (fh) {
-		fclose(fh);
-	} else {
-		PyErr_SetFromErrno(HunSpellError);
-		// TODO: Py_DECREF(*path);
-		return -1;
-	}
-	fh = fopen(PyBytes_AsString(apath), "r");
-	if (fh) {
-		fclose(fh);
-	} else {
-		PyErr_SetFromErrno(HunSpellError);
-		return -1;
-	}
+    PyObject *dpath = NULL; /* PyBytes in py3 PyString in py2 */
+    PyObject *apath = NULL;
+    FILE *fh;
 
-	self->handle = Hunspell_create(PyBytes_AsString(apath), PyBytes_AsString(dpath));
-	if(!self->handle) {
-		PyErr_SetString(HunSpellError, "Cannot open dictionary");
-		return -1;
-	}
-	self->encoding = Hunspell_get_dic_encoding(self->handle);
-	Py_DECREF(dpath);
-	Py_DECREF(apath);
-	return 0;
+#if PY_VERSION_HEX < 0x03010000
+    /* TODO: Please review if there is any shorter/nicer;less clumsy way to convert args to  PyStrings using Py_FileSystemDefaultEncoding in python 2.x */
+    const char * dpath_ptr = NULL;
+    const char * apath_ptr = NULL;
+    if (!PyArg_ParseTuple(args, "etet", Py_FileSystemDefaultEncoding, &dpath_ptr, Py_FileSystemDefaultEncoding, &apath_ptr))
+	return 1;
+    dpath =  PyString_FromString(dpath_ptr);
+    apath =  PyString_FromString(apath_ptr);
+#else
+    if (!PyArg_ParseTuple(args, "O&O&", PyUnicode_FSConverter, &dpath, PyUnicode_FSConverter, &apath))
+        return 1;
+#endif
+    /* Some versions of Hunspell_create() will succeed even if
+    * there are no dictionary files. So test for permissions.
+    */
+    /* TODO: consider  _Py_fopen for py3.x here ? */
+    fh = fopen(PyBytes_AsString(dpath), "r");
+    if (fh) {
+	fclose(fh);
+    } else {
+	PyErr_SetFromErrno(HunSpellError);
+	/* TODO: Py_DECREF(*path); */
+	return -1;
+    }
+    fh = fopen(PyBytes_AsString(apath), "r");
+    if (fh) {
+        fclose(fh);
+    } else {
+	PyErr_SetFromErrno(HunSpellError);
+	return -1;
+    }
+
+    self->handle = Hunspell_create(PyBytes_AsString(apath), PyBytes_AsString(dpath));
+    if(!self->handle) {
+	PyErr_SetString(HunSpellError, "Cannot open dictionary");
+	return -1;
+    }
+    self->encoding = Hunspell_get_dic_encoding(self->handle);
+    Py_DECREF(dpath);
+    Py_DECREF(apath);
+    return 0;
 }
 
 static void
 HunSpell_dealloc(HunSpell * self)
 {
-	Hunspell_destroy(self->handle);
-	Py_TYPE(self)->tp_free((PyObject *)self);
+    Hunspell_destroy(self->handle);
+    Py_TYPE(self)->tp_free((PyObject *)self);
 }
 
 static PyObject *
 HunSpell_get_dic_encoding(HunSpell * self, PyObject *args)
 {
-	return Py_BuildValue("s", self->encoding);
+    return Py_BuildValue("s", self->encoding);
 }
 
 static PyObject *
 HunSpell_spell(HunSpell * self, PyObject *args)
 {
-	char *word;
-	int retvalue;
+    char *word;
+    int retvalue;
 
-	if (!PyArg_ParseTuple(args, "et", self->encoding, &word))
-		return NULL;
-	retvalue = Hunspell_spell(self->handle, word);
-	PyMem_Free(word);
+    if (!PyArg_ParseTuple(args, "et", self->encoding, &word))
+	return NULL;
+    retvalue = Hunspell_spell(self->handle, word);
+    PyMem_Free(word);
 
-	return PyBool_FromLong(retvalue);
+    return PyBool_FromLong(retvalue);
 }
 
 
 static PyObject *
 HunSpell_suggest(HunSpell * self, PyObject *args)
 {
-	char *word, **slist;
-	int i, num_slist, ret;
-	PyObject *slist_list, *pystr;
+    char *word, **slist;
+    int i, num_slist, ret;
+    PyObject *slist_list, *pystr;
 
-	if (!PyArg_ParseTuple(args, "et", self->encoding, &word))
-		return NULL;
+    if (!PyArg_ParseTuple(args, "et", self->encoding, &word))
+	return NULL;
 
-	slist_list = PyList_New(0);
+    slist_list = PyList_New(0);
     if (!slist_list) {
         return NULL;
     }
-	num_slist = Hunspell_suggest(self->handle, &slist, word);
-	PyMem_Free(word);
+    num_slist = Hunspell_suggest(self->handle, &slist, word);
+    PyMem_Free(word);
 
-	for (i = 0, ret = 0; !ret && i < num_slist; i++) {
-		pystr = PyBytes_FromString(slist[i]);
-		if (!pystr)
-			break;
-		ret = PyList_Append(slist_list, pystr);
-		Py_DECREF(pystr);
-	}
+    for (i = 0, ret = 0; !ret && i < num_slist; i++) {
+	pystr = PyBytes_FromString(slist[i]);
+	if (!pystr)
+            break;
+	ret = PyList_Append(slist_list, pystr);
+	Py_DECREF(pystr);
+    }
 
-	Hunspell_free_list(self->handle, &slist, num_slist);
-	return slist_list;
+    Hunspell_free_list(self->handle, &slist, num_slist);
+    return slist_list;
 }
 
 static PyObject *
 HunSpell_analyze(HunSpell * self, PyObject *args)
 {
-	char *word, **slist;
-	int i, num_slist, ret;
-	PyObject *slist_list, *pystr;
+    char *word, **slist;
+    int i, num_slist, ret;
+    PyObject *slist_list, *pystr;
 
-	if (!PyArg_ParseTuple(args, "et", self->encoding, &word))
-		return NULL;
+    if (!PyArg_ParseTuple(args, "et", self->encoding, &word))
+	return NULL;
 
-	slist_list = PyList_New(0);
+    slist_list = PyList_New(0);
     if (!slist_list) {
         return NULL;
     }
-	num_slist = Hunspell_analyze(self->handle, &slist, word);
-	PyMem_Free(word);
+    num_slist = Hunspell_analyze(self->handle, &slist, word);
+    PyMem_Free(word);
 
-	for (i = 0, ret = 0; !ret && i < num_slist; i++) {
-		pystr = PyBytes_FromString(slist[i]);
-		if (!pystr)
-			break;
-		ret = PyList_Append(slist_list, pystr);
-		Py_DECREF(pystr);
-	}
+    for (i = 0, ret = 0; !ret && i < num_slist; i++) {
+	pystr = PyBytes_FromString(slist[i]);
+        if (!pystr)
+            break;
+	ret = PyList_Append(slist_list, pystr);
+	Py_DECREF(pystr);
+    }
 
-	Hunspell_free_list(self->handle, &slist, num_slist);
-	return slist_list;
+    Hunspell_free_list(self->handle, &slist, num_slist);
+    return slist_list;
 }
 
 static PyObject *
 HunSpell_stem(HunSpell * self, PyObject *args)
 {
-	char *word, **slist;
-	int i, num_slist, ret;
-	PyObject *slist_list, *pystr;
+    char *word, **slist;
+    int i, num_slist, ret;
+    PyObject *slist_list, *pystr;
 
-	if (!PyArg_ParseTuple(args, "et", self->encoding, &word))
-		return NULL;
+    if (!PyArg_ParseTuple(args, "et", self->encoding, &word))
+	return NULL;
 
-	slist_list = PyList_New(0);
+    slist_list = PyList_New(0);
     if (!slist_list) {
         return NULL;
     }
-	num_slist = Hunspell_stem(self->handle, &slist, word);
-	PyMem_Free(word);
+    num_slist = Hunspell_stem(self->handle, &slist, word);
+    PyMem_Free(word);
 
-	for (i = 0, ret = 0; !ret && i < num_slist; i++) {
-		pystr = PyBytes_FromString(slist[i]);
-		if (!pystr)
-			break;
-		ret = PyList_Append(slist_list, pystr);
-		Py_DECREF(pystr);
-	}
+    for (i = 0, ret = 0; !ret && i < num_slist; i++) {
+	pystr = PyBytes_FromString(slist[i]);
+	if (!pystr)
+            break;
+	ret = PyList_Append(slist_list, pystr);
+	Py_DECREF(pystr);
+    }
 
-	Hunspell_free_list(self->handle, &slist, num_slist);
-	return slist_list;
+    Hunspell_free_list(self->handle, &slist, num_slist);
+    return slist_list;
 }
 
 static PyObject *
 HunSpell_generate(HunSpell * self, PyObject *args)
 {
-	char *word1, *word2, **slist;
-	int i, num_slist, ret;
-	PyObject *slist_list, *pystr;
+    char *word1, *word2, **slist;
+    int i, num_slist, ret;
+    PyObject *slist_list, *pystr;
 
-	if (!PyArg_ParseTuple(args, "etet", self->encoding, &word1, self->encoding, &word2))
-		return NULL;
+    if (!PyArg_ParseTuple(args, "etet", self->encoding, &word1, self->encoding, &word2))
+	return NULL;
 
-	slist_list = PyList_New(0);
+    slist_list = PyList_New(0);
     if (!slist_list) {
         return NULL;
     }
-	num_slist = Hunspell_generate(self->handle, &slist, word1, word2);
-	PyMem_Free(word1);
-	PyMem_Free(word2);
+    num_slist = Hunspell_generate(self->handle, &slist, word1, word2);
+    PyMem_Free(word1);
+    PyMem_Free(word2);
 
-	for (i = 0, ret = 0; !ret && i < num_slist; i++) {
-		pystr = PyBytes_FromString(slist[i]);
-		if (!pystr)
-			break;
-		ret = PyList_Append(slist_list, pystr);
-		Py_DECREF(pystr);
-	}
+    for (i = 0, ret = 0; !ret && i < num_slist; i++) {
+	pystr = PyBytes_FromString(slist[i]);
+	if (!pystr)
+            break;
+	ret = PyList_Append(slist_list, pystr);
+	Py_DECREF(pystr);
+    }
 
-	Hunspell_free_list(self->handle, &slist, num_slist);
-	return slist_list;
+    Hunspell_free_list(self->handle, &slist, num_slist);
+    return slist_list;
 }
 
 static PyObject *
 HunSpell_add(HunSpell * self, PyObject *args)
 {
-	char *word;
-	int retvalue;
+    char *word;
+    int retvalue;
 
-	if (!PyArg_ParseTuple(args, "et", self->encoding, &word))
-		return NULL;
-	retvalue = Hunspell_add(self->handle, word);
-	PyMem_Free(word);
+    if (!PyArg_ParseTuple(args, "et", self->encoding, &word))
+	return NULL;
+    retvalue = Hunspell_add(self->handle, word);
+    PyMem_Free(word);
 
-	return PyLong_FromLong(retvalue);
+    return PyLong_FromLong(retvalue);
 }
 
 static PyObject *
 HunSpell_add_with_affix(HunSpell * self, PyObject *args)
 {
-	char *word, *example;
-	int retvalue;
+    char *word, *example;
+    int retvalue;
 
-	if (!PyArg_ParseTuple(args, "etet", self->encoding, &word, self->encoding, &example))
-		return NULL;
-	retvalue = Hunspell_add_with_affix(self->handle, word, example);
-	PyMem_Free(word);
-	PyMem_Free(example);
+    if (!PyArg_ParseTuple(args, "etet", self->encoding, &word, self->encoding, &example))
+	return NULL;
+    retvalue = Hunspell_add_with_affix(self->handle, word, example);
+    PyMem_Free(word);
+    PyMem_Free(example);
 
-	return PyLong_FromLong(retvalue);
+    return PyLong_FromLong(retvalue);
 }
 
 static PyObject *
 HunSpell_remove(HunSpell * self, PyObject *args)
 {
-	char *word;
-	int retvalue;
+    char *word;
+    int retvalue;
 
-	if (!PyArg_ParseTuple(args, "et", self->encoding, &word))
-		return NULL;
-	retvalue = Hunspell_remove(self->handle, word);
-	PyMem_Free(word);
+    if (!PyArg_ParseTuple(args, "et", self->encoding, &word))
+	return NULL;
+    retvalue = Hunspell_remove(self->handle, word);
+    PyMem_Free(word);
 
-	return PyLong_FromLong(retvalue);
+    return PyLong_FromLong(retvalue);
 }
 
 static PyMethodDef HunSpell_methods[] = {
@@ -300,7 +300,7 @@ static PyMethodDef HunSpell_methods[] = {
 	 "Adds the given word into the runtime dictionary"},
 	{"add_with_affix", (PyCFunction) HunSpell_add_with_affix, METH_VARARGS,
 	 "Adds the given word with affix flags of the example (a dictionary word) \
-     into the runtime dictionary"},
+            into the runtime dictionary"},
 	{"remove", (PyCFunction) HunSpell_remove, METH_VARARGS,
 	 "Removes the given word from the runtime dictionary"},
 	{NULL}
@@ -364,49 +364,49 @@ static struct PyModuleDef hunspellmodule = {
 PyObject*
 PyInit_hunspell(void)
 {
-	PyObject *mod;
+    PyObject *mod;
 
-	// Create the module
-	mod = PyModule_Create(&hunspellmodule);
-	if (mod == NULL) {
-		return NULL;
-	}
+    /* Create the module */
+    mod = PyModule_Create(&hunspellmodule);
+    if (mod == NULL) {
+	return NULL;
+    }
 
-	// Fill in some slots in the type, and make it ready
-	HunSpellType.tp_new = PyType_GenericNew;
-	if (PyType_Ready(&HunSpellType) < 0) {
-		return NULL;
-	}
-	// Add the type to the module.
-	Py_INCREF(&HunSpellType);
-	PyModule_AddObject(mod, "HunSpell", (PyObject *)&HunSpellType);
+    /* Fill in some slots in the type, and make it ready */
+    HunSpellType.tp_new = PyType_GenericNew;
+    if (PyType_Ready(&HunSpellType) < 0) {
+	return NULL;
+    }
+    /* Add the type to the module. */
+    Py_INCREF(&HunSpellType);
+    PyModule_AddObject(mod, "HunSpell", (PyObject *)&HunSpellType);
     HunSpellError = PyErr_NewException("hunspell.error", NULL, NULL);
     Py_INCREF(HunSpellError);
-	return mod;
+    return mod;
 }
 #else
 PyObject*
 inithunspell(void)
 {
-	PyObject *mod;
+    PyObject *mod;
 
-	// Create the module
-	mod = Py_InitModule3("hunspell", NULL,
+    /* Create the module */
+    mod = Py_InitModule3("hunspell", NULL,
 			     "An extension for the Hunspell spell checker engine");
-	if (mod == NULL) {
-		return NULL;
-	}
+    if (mod == NULL) {
+	return NULL;
+    }
 
-	// Fill in some slots in the type, and make it ready
-	HunSpellType.tp_new = PyType_GenericNew;
-	if (PyType_Ready(&HunSpellType) < 0) {
-		return NULL;
-	}
-	// Add the type to the module.
-	Py_INCREF(&HunSpellType);
-	PyModule_AddObject(mod, "HunSpell", (PyObject *)&HunSpellType);
+    /* Fill in some slots in the type, and make it ready */
+    HunSpellType.tp_new = PyType_GenericNew;
+    if (PyType_Ready(&HunSpellType) < 0) {
+	return NULL;
+    }
+    /* Add the type to the module. */
+    Py_INCREF(&HunSpellType);
+    PyModule_AddObject(mod, "HunSpell", (PyObject *)&HunSpellType);
     HunSpellError = PyErr_NewException("hunspell.error", NULL, NULL);
     Py_INCREF(HunSpellError);
-	return mod;
+    return mod;
 }
 #endif
