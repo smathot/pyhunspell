@@ -28,8 +28,8 @@
 // Compatibility python3 defines for python2
 #if PY_MAJOR_VERSION < 3
 	#define PyInt_FromLong PyLong_FromLong
-	#define PyBytes_FromString  PyString_FromString
-#endif
+	#define PyBytes_FromString  PyString_FromString	
+#endif // PY_MAJOR_VERSION < 3
 
 
 /****************************************
@@ -47,46 +47,50 @@ typedef struct {
 static int
 HunSpell_init(HunSpell * self, PyObject *args, PyObject *kwds)
 {
-	PyObject *dpath;
-	PyObject *apath;
-    FILE *fh;
-
+	PyObject *dpath = NULL; // PyBytes in py3 PyString in py2
+	PyObject *apath = NULL;  
+	FILE *fh;
+	
 #if PY_VERSION_HEX < 0x03010000
-	if (!PyArg_ParseTuple(args, "etet", Py_FileSystemDefaultEncoding, &dpath, Py_FileSystemDefaultEncoding, &apath))
+	// TODO: Please review if there is any shorter/nicer;less clumsy way to convert args to  PyStrings using Py_FileSystemDefaultEncoding in python 2.x
+	const char * dpath_ptr = NULL;
+	const char * apath_ptr = NULL;
+	if (!PyArg_ParseTuple(args, "etet", Py_FileSystemDefaultEncoding, &dpath_ptr, Py_FileSystemDefaultEncoding, &apath_ptr))
+		return 1;
+	dpath =  PyString_FromString(dpath_ptr);
+	apath =  PyString_FromString(apath_ptr);
 #else
 	if (!PyArg_ParseTuple(args, "O&O&", PyUnicode_FSConverter, &dpath, PyUnicode_FSConverter, &apath))
-#endif
 		return 1;
-
-    /* Some versions of Hunspell_create() will succeed even if
-    * there are no dictionary files. So test for permissions.
-    */
-    fh = fopen(dpath, "r");
-    if (fh) {
-        fclose(fh);
-    } else {
-        PyErr_SetFromErrno(HunSpellError);
-        return -1;
-    }
-
-    fh = fopen(apath, "r");
-    if (fh) {
-        fclose(fh);
-    } else {
-        PyErr_SetFromErrno(HunSpellError);
-        return -1;
-    }
+#endif
+	/* Some versions of Hunspell_create() will succeed even if
+	* there are no dictionary files. So test for permissions.
+	*/
+	// TODO: consider  _Py_fopen for py3.x here ?
+	fh = fopen(PyBytes_AsString(dpath), "r");
+	if (fh) {
+		fclose(fh);
+	} else {
+		PyErr_SetFromErrno(HunSpellError);
+		// TODO: Py_DECREF(*path);
+		return -1;
+	}
+	fh = fopen(PyBytes_AsString(apath), "r");
+	if (fh) {
+		fclose(fh);
+	} else {
+		PyErr_SetFromErrno(HunSpellError);
+		return -1;
+	}
 
 	self->handle = Hunspell_create(PyBytes_AsString(apath), PyBytes_AsString(dpath));
-    if(!self->handle) {
-        PyErr_SetString(HunSpellError, "Cannot open dictionary");
-        return -1;
-    }
+	if(!self->handle) {
+		PyErr_SetString(HunSpellError, "Cannot open dictionary");
+		return -1;
+	}
 	self->encoding = Hunspell_get_dic_encoding(self->handle);
-
 	Py_DECREF(dpath);
 	Py_DECREF(apath);
-
 	return 0;
 }
 
