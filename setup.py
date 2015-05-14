@@ -11,11 +11,11 @@ the Free Software Foundation, either version 3 of the License, or
 
 PyHunspell is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with PyHunspell.  If not, see <http://www.gnu.org/licenses/>.
+along with PyHunspell. If not, see <http://www.gnu.org/licenses/>.
 """
 
 from distutils.core import setup, Extension
@@ -28,7 +28,7 @@ main = Extension('hunspell',
                  extra_compile_args=['-Wall'])
 
 setup(name="hunspell",
-      version="0.3.2",
+      version="0.3.3",
       description="Module for the Hunspell spellchecker engine",
       author="Benoît Latinier",
       author_email="benoit@latinier.fr",

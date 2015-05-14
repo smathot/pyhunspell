@@ -3,17 +3,33 @@ ABOUT PYHUNSPELL
 Pyhunspell is a set of Python bindings for the Hunspell spellchecker engine. It
 lets developers load Hunspell dictionaries, check words, get suggestions, add
 new words, etc. It also provides some basic morphological analysis related
-methods. Basic usage instructions are at UsingPyHunspell.
-
-* <http://code.google.com/p/pyhunspell/wiki/UsingPyHunspell>
-* <http://hunspell.sourceforge.net/>
+methods.
 
 INSTALLATION
 ============
-Make sure that python-dev and libhunspell-dev are installed and run the
-following command as root to install pyhunspell:
+Make sure that python-dev and libhunspell-dev are installed.
 
+You can install this package using pip:
+> pip install pyhunspell
+
+Or from source using the following command as root:
 > python setup.py install
+
+USAGE
+=====
+>>> import hunspell
+>>> hobj = hunspell.HunSpell('/usr/share/myspell/en_US.dic', '/usr/share/myspell/en_US.aff')
+>>> hobj.spell('spookie')
+False
+>>> hobj.suggest('spookie')
+['spookier', 'spookiness', 'spooky', 'spook', 'spoonbill']
+>>> hobj.spell('spooky')
+True
+>>> hobj.analyze('linked')
+[' st:link fl:D']
+>>> hobj.stem('linked')
+['link']
+>>> 
 
 LICENSE
 =======
