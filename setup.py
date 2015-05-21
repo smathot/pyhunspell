@@ -21,11 +21,13 @@ along with PyHunspell. If not, see <http://www.gnu.org/licenses/>.
 from distutils.core import setup, Extension
 
 main = Extension('hunspell',
-                 define_macros=[('_LINUX', None)],
-                 libraries=['hunspell'],
-                 include_dirs=['/usr/include/hunspell'],
+                 define_macros=[('HUNSPELL_STATIC', None)],
+#                 library_dirs=['V:/hunspell-1.3.3/src/win_api/Release/libhunspell'],
+                 library_dirs=['V:/hunspell-1.3.3/src/win_api/x64/Release/libhunspell'],
+                 libraries=['libhunspell'],
+                 include_dirs=['V:/hunspell-1.3.3/src/hunspell'],
                  sources=['hunspell.c'],
-                 extra_compile_args=['-Wall'])
+                 extra_compile_args=['/MT'])
 
 setup(name="hunspell",
       version="0.3.3",
