@@ -19,15 +19,22 @@ along with PyHunspell. If not, see <http://www.gnu.org/licenses/>.
 """
 
 from distutils.core import setup, Extension
+import platform
 
-main = Extension('hunspell',
-                 define_macros=[('HUNSPELL_STATIC', None)],
-#                 library_dirs=['V:/hunspell-1.3.3/src/win_api/Release/libhunspell'],
-                 library_dirs=['V:/hunspell-1.3.3/src/win_api/x64/Release/libhunspell'],
-                 libraries=['libhunspell'],
-                 include_dirs=['V:/hunspell-1.3.3/src/hunspell'],
-                 sources=['hunspell.c'],
-                 extra_compile_args=['/MT'])
+main_module_kwargs = {"sources": ['hunspell.c']}
+if platform.system() == "Windows":
+    main_module_kwargs['macros'] = [('HUNSPELL_STATIC', None)]
+    main_module_kwargs['libraries'] = ['libhunspell']
+    main_module_kwargs['include_dirs'] = ['V:/hunspell-1.3.3/src/hunspell']
+    main_module_kwargs['library_dirs'] = ['V:/hunspell-1.3.3/src/win_api/x64/Release/libhunspell']
+    main_module_kwargs['compile_args'] = ['/MT']
+else:
+    main_module_kwargs['macros'] = [('_LINUX', None)]
+    main_module_kwargs['libraries'] = ['hunspell']
+    main_module_kwargs['include_dirs'] = ['/usr/include/hunspell'],
+    main_module_kwargs['compile_args'] = ['-Wall']
+
+main = Extension('hunspell', **main_module_kwargs)
 
 setup(name="hunspell",
       version="0.3.3",
