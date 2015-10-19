@@ -10,7 +10,7 @@ INSTALLATION
 Make sure that python-dev and libhunspell-dev are installed.
 
 You can install this package using pip:
-> pip install pyhunspell
+> pip install hunspell
 
 Or from source using the following command as root:
 > python setup.py install
