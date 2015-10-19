@@ -13,6 +13,7 @@ python:
 addons:
   apt:
     packages:
+      - hunspell
       - libhunspell-dev
 # command to install dependencies
 install:
