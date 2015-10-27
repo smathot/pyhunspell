@@ -24,21 +24,21 @@ class HunSpellTest(unittest.TestCase):
 
     def test_hunspell_suggest(self):
         self.assertEqual(self.hunspell.suggest('dpg'),
-                         ['dog', 'pg', 'deg', 'dig', 'dpt',
-                          'dug', 'mpg', 'd pg', 'GDP',
-                          'DP', 'PG', 'DTP', 'dip'])
+                         [b'dog', b'pg', b'deg', b'dig', b'dpt',
+                          b'dug', b'mpg', b'd pg', b'GDP',
+                          b'DP', b'PG', b'DTP', b'dip'])
         self.assertEqual(self.hunspell.suggest('spookie'),
-                         ['spookier', 'spookiness', 'spook', 'cookie',
-                          'bookie', 'Spokane', 'spoken'])
+                         [b'spookier', b'spookiness', b'spook', b'cookie',
+                          b'bookie', b'Spokane', b'spoken'])
 
     def test_hunspell_stem(self):
-        self.assertEqual(self.hunspell.stem('dog'), ['dog'])
-        self.assertEqual(self.hunspell.stem('permanently'), ['permanent'])
-        self.assertEqual(self.hunspell.stem('linked'), ['linked', 'link'])
+        self.assertEqual(self.hunspell.stem('dog'), [b'dog'])
+        self.assertEqual(self.hunspell.stem('permanently'), [b'permanent'])
+        self.assertEqual(self.hunspell.stem('linked'), [b'linked', b'link'])
 
     def test_analyze(self):
         self.assertEqual(self.hunspell.analyze('linked'),
-                         [' st:linked', ' st:link fl:D'])
+                         [b' st:linked', b' st:link fl:D'])
 
 if __name__ == '__main__':
     unittest.main()
