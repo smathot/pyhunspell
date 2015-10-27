@@ -10,14 +10,17 @@ python:
   - "3.5-dev" # 3.5 development branch
   - "nightly" # currently points to 3.6-dev
   - "pypy"
+
+# command to system install dependencies
 addons:
   apt:
     packages:
       - hunspell
       - libhunspell-dev
-# command to install dependencies
+
 install:
+  - pip install nose
   - pip install .
+
 # command to run tests
-# TODO add some basic tests
-#script: nosetests
+script: nosetests tests

@@ -1,9 +1,9 @@
 ABOUT PYHUNSPELL
 ================
 
-**pyhunspell** is a set of Python bindings for the Hunspell spellchecker 
-engine. It lets developers load Hunspell dictionaries, check words, get 
-suggestions, add new words, etc. It also provides some basic morphological 
+**pyhunspell** is a set of Python bindings for the Hunspell spellchecker
+engine. It lets developers load Hunspell dictionaries, check words, get
+suggestions, add new words, etc. It also provides some basic morphological
 analysis related methods.
 
 INSTALLATION
@@ -23,18 +23,17 @@ USAGE
 =====
 
     >>> import hunspell
-    >>> hobj = hunspell.HunSpell('/usr/share/myspell/en_US.dic', '/usr/share/myspell/en_US.aff')
+    >>> hobj = hunspell.HunSpell('/usr/share/hunspell/en_US.dic', '/usr/share/hunspell/en_US.aff')
     >>> hobj.spell('spookie')
     False
     >>> hobj.suggest('spookie')
-    ['spookier', 'spookiness', 'spooky', 'spook', 'spoonbill']
+    ['spookier', 'spookiness', 'spook', 'cookie', 'bookie', 'Spokane', 'spoken']
     >>> hobj.spell('spooky')
     True
     >>> hobj.analyze('linked')
-    [' st:link fl:D']
+    [' st:linked', ' st:link fl:D']
     >>> hobj.stem('linked')
-    ['link']
-    >>> 
+    ['linked', 'link']
 
 LICENSE
 =======
