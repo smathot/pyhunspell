@@ -40,5 +40,17 @@ class HunSpellTest(unittest.TestCase):
         self.assertEqual(self.hunspell.analyze('linked'),
                          [b' st:linked', b' st:link fl:D'])
 
+
+class HunSpellGenerateTest(unittest.TestCase):
+    def setUp(self):
+        self.hunspell = HunSpell("/usr/share/hunspell/en_GB.dic",
+                                 "/usr/share/hunspell/en_GB.aff")
+
+    def test_generate(self):
+        self.assertEqual(self.hunspell.generate('boy', 'girls'), [b'boys'])
+
+    def test_generate2(self):
+        self.assertEqual(self.hunspell.generate2('boy', 'is:Ns', 1), [b'boys'])
+
 if __name__ == '__main__':
     unittest.main()

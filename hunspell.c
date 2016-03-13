@@ -240,6 +240,37 @@ HunSpell_generate(HunSpell * self, PyObject *args)
 }
 
 static PyObject *
+HunSpell_generate2(HunSpell * self, PyObject *args)
+{
+    char *word1, *desc, **slist;
+    int i, num_slist, ret, nb;
+    PyObject *slist_list, *pystr;
+
+    if (!PyArg_ParseTuple(args, "eteti", self->encoding, &word1, self->encoding, &desc, &nb))
+	return NULL;
+
+    slist_list = PyList_New(0);
+    if (!slist_list) {
+        return NULL;
+    }
+
+    num_slist = Hunspell_generate2(self->handle, &slist, word1, &desc, nb);
+    PyMem_Free(word1);
+    PyMem_Free(desc);
+
+    for (i = 0, ret = 0; !ret && i < num_slist; i++) {
+	pystr = PyBytes_FromString(slist[i]);
+	if (!pystr)
+            break;
+	ret = PyList_Append(slist_list, pystr);
+	Py_DECREF(pystr);
+    }
+
+    Hunspell_free_list(self->handle, &slist, num_slist);
+    return slist_list;
+}
+
+static PyObject *
 HunSpell_add(HunSpell * self, PyObject *args)
 {
     char *word;
@@ -295,6 +326,8 @@ static PyMethodDef HunSpell_methods[] = {
 	{"stem", (PyCFunction) HunSpell_stem, METH_VARARGS,
 	 "Stemmer method."},
 	{"generate", (PyCFunction) HunSpell_generate, METH_VARARGS,
+	 "Provide morphological generation for the given word."},
+	{"generate2", (PyCFunction) HunSpell_generate2, METH_VARARGS,
 	 "Provide morphological generation for the given word."},
 	{"add", (PyCFunction) HunSpell_add, METH_VARARGS,
 	 "Adds the given word into the runtime dictionary"},
