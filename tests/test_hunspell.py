@@ -43,8 +43,8 @@ class HunSpellTest(unittest.TestCase):
 
 class HunSpellGenerateTest(unittest.TestCase):
     def setUp(self):
-        self.hunspell = HunSpell("/usr/share/hunspell/en_GB.dic",
-                                 "/usr/share/hunspell/en_GB.aff")
+        self.hunspell = HunSpell("/usr/share/hunspell/en_US.dic",
+                                 "/usr/share/hunspell/en_US.aff")
 
     def test_generate(self):
         self.assertEqual(self.hunspell.generate('boy', 'girls'), [b'boys'])
