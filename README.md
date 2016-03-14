@@ -23,6 +23,9 @@ Or from source using the following command as root:
 python setup.py install
 ```
 
+For windows7 [@tallforasmurf](https://github.com/tallforasmurf) compiled a python 3.4 compatible version of the pyhunspell==0.3.3 package available here: http://pyhunspell.latinier.fr
+(Warning: Those windows compiled packages are not reviewed or tested). It could work for other windows version or python versions.
+
 # Usage
 ```
 >>> import hunspell
