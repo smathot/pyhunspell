@@ -16,7 +16,9 @@ addons:
   apt:
     packages:
       - hunspell
+      - hunspell-en-us
       - libhunspell-dev
+      - myspell-en-gb
 
 install:
   - pip install nose
