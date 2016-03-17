@@ -40,6 +40,14 @@ True
 [' st:linked', ' st:link fl:D']
 >>> hobj.stem('linked')
 ['linked', 'link']
+>>> hobj.spell('spookie')
+False
+>>> hobj.add('spookie')
+>>> hobj.spell('spookie')
+True
+>>> hobj.remove('spookie')
+>>> hobj.spell('spookie')
+False
 ```
 
 # License
