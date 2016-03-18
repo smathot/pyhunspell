@@ -2,8 +2,6 @@ import os
 import unittest
 from hunspell import HunSpell
 
-DICT_DIR = os.path.join(os.path.dirname(__file__), '..', 'dictionaries')
-
 
 class HunSpellTest(unittest.TestCase):
     def setUp(self):
@@ -40,6 +38,13 @@ class HunSpellTest(unittest.TestCase):
         self.assertEqual(self.hunspell.analyze('linked'),
                          [b' st:linked', b' st:link fl:D'])
 
+    def test_add_remove(self):
+        self.assertFalse(self.hunspell.spell('pipo'))
+        self.hunspell.add('pipo')
+        self.assertTrue(self.hunspell.spell('pipo'))
+        self.hunspell.remove('pipo')
+        self.assertFalse(self.hunspell.spell('pipo'))
+
 
 class HunSpellGenerateTest(unittest.TestCase):
     def setUp(self):
@@ -50,7 +55,7 @@ class HunSpellGenerateTest(unittest.TestCase):
         self.assertEqual(self.hunspell.generate('boy', 'girls'), [b'boys'])
 
     def test_generate2(self):
-        self.assertEqual(self.hunspell.generate2('boy', 'is:Ns', 1), [b'boys'])
+        self.assertEqual(self.hunspell.generate2('boy', 'is:Ns'), [b'boys'])
 
 if __name__ == '__main__':
     unittest.main()

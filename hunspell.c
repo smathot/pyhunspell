@@ -243,10 +243,10 @@ static PyObject *
 HunSpell_generate2(HunSpell * self, PyObject *args)
 {
     char *word1, *desc, **slist;
-    int i, num_slist, ret, nb;
+    int i, num_slist, ret;
     PyObject *slist_list, *pystr;
 
-    if (!PyArg_ParseTuple(args, "eteti", self->encoding, &word1, self->encoding, &desc, &nb))
+    if (!PyArg_ParseTuple(args, "etet", self->encoding, &word1, self->encoding, &desc))
         return NULL;
 
     slist_list = PyList_New(0);
@@ -254,7 +254,7 @@ HunSpell_generate2(HunSpell * self, PyObject *args)
         return NULL;
     }
 
-    num_slist = Hunspell_generate2(self->handle, &slist, word1, &desc, nb);
+    num_slist = Hunspell_generate2(self->handle, &slist, word1, &desc, 1);
     PyMem_Free(word1);
     PyMem_Free(desc);
 
