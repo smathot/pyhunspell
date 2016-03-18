@@ -7,6 +7,10 @@ engine. It lets developers load Hunspell dictionaries, check words, get
 suggestions, add new words, etc. It also provides some basic morphological
 analysis related methods.
 
+See [ChangeLog](https://github.com/blatinier/pyhunspell/blob/master/CHANGELOG.md) for activity.
+
+See [Authors](https://github.com/blatinier/pyhunspell/blob/master/AUTHORS.md) for all contributors.
+
 # Installation
 
 Make sure that `python-dev` and `libhunspell-dev` are installed.
@@ -49,6 +53,11 @@ True
 >>> hobj.spell('spookie')
 False
 ```
+
+# Misc
+
+For information, version naming (introduced for 0.4.0) is based on Hungarian cities ordered by population except Budapest.
+The reason why is that hunspell stands for Hungarian Spell.
 
 # License
 

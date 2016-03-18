@@ -1,15 +1,15 @@
 # Changelog
 
-## 0.4.0 (??)
+## 0.4.0 - Debrecen (??)
 ### Bug fixes
-- Drop the useless third parameter of generate2 which segfaults if not 0 or 1 (*Breaking change*: generate2 only takes 2 arguments now, not 3)
+- Drop the useless third parameter of generate2 which segfaults if not 0 or 1 (**Breaking change**: generate2 only takes 2 arguments now, not 3)
 
 ### Improvements
 - Add full documentation to all functions
-- Add this greate CHANGELOG :)
+- Add this great CHANGELOG :)
 - Add AUTHORS
 
-## 0.3.5 (2015-05-14)
+## 0.3.5 (2016-03-15)
 ### Improvements
 - Add new dict in travis build to fix generate2 tests (Antoine Fontaine)
 - Add links to windows7 binaries in README (Warning: those bin are not tested)
