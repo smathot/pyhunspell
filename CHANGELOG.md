@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.4.0 - Debrecen (??)
+## 0.4.0 - Debrecen (2016-03-18)
 ### Bug fixes
 - Drop the useless third parameter of generate2 which segfaults if not 0 or 1 (**Breaking change**: generate2 only takes 2 arguments now, not 3)
 
