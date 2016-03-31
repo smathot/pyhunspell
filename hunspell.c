@@ -505,8 +505,9 @@ PyInit_hunspell(void)
     /* Add the type to the module. */
     Py_INCREF(&HunSpellType);
     PyModule_AddObject(mod, "HunSpell", (PyObject *)&HunSpellType);
-    HunSpellError = PyErr_NewException("hunspell.error", NULL, NULL);
+    HunSpellError = PyErr_NewException("hunspell.HunSpellError", NULL, NULL);
     Py_INCREF(HunSpellError);
+    PyModule_AddObject(mod, "HunSpellError", HunSpellError);
     return mod;
 }
 #else
@@ -530,8 +531,9 @@ inithunspell(void)
     /* Add the type to the module. */
     Py_INCREF(&HunSpellType);
     PyModule_AddObject(mod, "HunSpell", (PyObject *)&HunSpellType);
-    HunSpellError = PyErr_NewException("hunspell.error", NULL, NULL);
+    HunSpellError = PyErr_NewException("hunspell.HunSpellError", NULL, NULL);
     Py_INCREF(HunSpellError);
+    PyModule_AddObject(mod, "HunSpellError", HunSpellError);
     return mod;
 }
 #endif
