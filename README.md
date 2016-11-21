@@ -27,6 +27,12 @@ Or from source using the following command as root:
 python setup.py install
 ```
 
+For OSX 10.10 [@mimrock](https://github.com/mimrock) indicated that you might need to do something like this:
+
+```
+ln -s /usr/local/lib/libhunspell-1.4.a /usr/local/lib/libhunspell.a
+```
+
 For windows7 [@tallforasmurf](https://github.com/tallforasmurf) compiled a python 3.4 compatible version of the pyhunspell==0.3.3 package available here: http://pyhunspell.latinier.fr
 (Warning: Those windows compiled packages are not reviewed or tested). It could work for other windows version or python versions.
 
