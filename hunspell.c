@@ -352,7 +352,7 @@ static PyMethodDef HunSpell_methods[] = {
      "list of strings : Each string is a possible analysis of the input word. "
      "It contains the stem of the word (st:XXX) and some information about "
      "modifications done to get to the input word.\n"
-     "For more informations see: man 4 hunspell (or https://sourceforge.net/projects/hunspell/files/Hunspell/Documentation/) "
+     "For more information see: man 4 hunspell (or https://sourceforge.net/projects/hunspell/files/Hunspell/Documentation/) "
      "in the \'Optional data fields\" section."},
 
     {"stem", (PyCFunction) HunSpell_stem, METH_VARARGS,
@@ -398,7 +398,7 @@ static PyMethodDef HunSpell_methods[] = {
      "Parameters\n"
      "----------\n"
      "word : string\n"
-     "    The word to add in the dictionnary\n\n"
+     "    The word to add in the dictionary\n\n"
      "Returns\n"
      "-------\n"
      "int : 0 if success, hunspell program error code else."},
@@ -421,7 +421,7 @@ static PyMethodDef HunSpell_methods[] = {
      "Parameters\n"
      "----------\n"
      "word : string\n"
-     "    The word to remove from the dictionnary\n\n"
+     "    The word to remove from the dictionary\n\n"
      "Returns\n"
      "-------\n"
      "int : 0 if success, hunspell program error code else."},
