@@ -21,7 +21,8 @@ along with PyHunspell. If not, see <http://www.gnu.org/licenses/>.
 from distutils.core import setup, Extension
 import platform
 
-main_module_kwargs = {"sources": ['hunspell.c']}
+main_module_kwargs = {"sources": ['hunspell.cpp'],
+                      "language": "c++"}
 if platform.system() == "Windows":
     main_module_kwargs['macros'] = [('HUNSPELL_STATIC', None)]
     main_module_kwargs['libraries'] = ['libhunspell']

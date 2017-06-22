@@ -1,1 +1,4 @@
 .pyc
+venv
+__pycache__
+MANIFEST

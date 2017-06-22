@@ -1,3 +1,4 @@
+//http://python.jpvweb.com/python/mesrecettespython/doku.php?id=exemple_python_cpp
 /*  hunspell.c
  *
  *  Copyright (C) 2009 - Sayamindu Dasgupta <sayamindu@gmail.com>
@@ -17,7 +18,7 @@
  */
 
 #include <Python.h>
-#include <hunspell.h>
+#include <hunspell.hxx>
 
 
 #ifndef PyVarObject_HEAD_INIT
@@ -39,7 +40,7 @@ static PyObject *HunSpellError;
 
 typedef struct {
     PyObject_HEAD
-    Hunhandle *handle;
+    Hunspell * handle;
     const char *encoding;
 } HunSpell;
 
@@ -62,7 +63,7 @@ HunSpell_init(HunSpell * self, PyObject *args, PyObject *kwds)
     if (!PyArg_ParseTuple(args, "O&O&", PyUnicode_FSConverter, &dpath, PyUnicode_FSConverter, &apath))
         return 1;
 #endif
-    /* Some versions of Hunspell_create() will succeed even if
+    /* Some versions of Hunspell() will succeed even if
     * there are no dictionary files. So test for permissions.
     */
     /* TODO: consider  _Py_fopen for py3.x here ? */
@@ -82,12 +83,13 @@ HunSpell_init(HunSpell * self, PyObject *args, PyObject *kwds)
         return -1;
     }
 
-    self->handle = Hunspell_create(PyBytes_AsString(apath), PyBytes_AsString(dpath));
-    if(!self->handle) {
-        PyErr_SetString(HunSpellError, "Cannot open dictionary");
-        return -1;
-    }
-    self->encoding = Hunspell_get_dic_encoding(self->handle);
+    self->handle = new Hunspell(PyBytes_AsString(apath), PyBytes_AsString(dpath));
+    // TODO check class instanciation went well
+    //if(!self->handle) { Hunspell ain't bool
+    //    PyErr_SetString(HunSpellError, "Cannot open dictionary");
+    //    return -1;
+    //}
+    self->encoding = self->handle->get_dic_encoding();
     Py_DECREF(dpath);
     Py_DECREF(apath);
     return 0;
@@ -96,7 +98,6 @@ HunSpell_init(HunSpell * self, PyObject *args, PyObject *kwds)
 static void
 HunSpell_dealloc(HunSpell * self)
 {
-    Hunspell_destroy(self->handle);
     Py_TYPE(self)->tp_free((PyObject *)self);
 }
 
@@ -114,7 +115,7 @@ HunSpell_spell(HunSpell * self, PyObject *args)
 
     if (!PyArg_ParseTuple(args, "et", self->encoding, &word))
         return NULL;
-    retvalue = Hunspell_spell(self->handle, word);
+    retvalue = self->handle->spell(word);
     PyMem_Free(word);
 
     return PyBool_FromLong(retvalue);
@@ -135,7 +136,7 @@ HunSpell_suggest(HunSpell * self, PyObject *args)
     if (!slist_list) {
         return NULL;
     }
-    num_slist = Hunspell_suggest(self->handle, &slist, word);
+    num_slist = self->handle->suggest(&slist, word);
     PyMem_Free(word);
 
     for (i = 0, ret = 0; !ret && i < num_slist; i++) {
@@ -146,7 +147,7 @@ HunSpell_suggest(HunSpell * self, PyObject *args)
         Py_DECREF(pystr);
     }
 
-    Hunspell_free_list(self->handle, &slist, num_slist);
+    self->handle->free_list(&slist, num_slist);
     return slist_list;
 }
 
@@ -164,7 +165,7 @@ HunSpell_analyze(HunSpell * self, PyObject *args)
     if (!slist_list) {
         return NULL;
     }
-    num_slist = Hunspell_analyze(self->handle, &slist, word);
+    num_slist = self->handle->analyze(&slist, word);
     PyMem_Free(word);
 
     for (i = 0, ret = 0; !ret && i < num_slist; i++) {
@@ -175,7 +176,7 @@ HunSpell_analyze(HunSpell * self, PyObject *args)
         Py_DECREF(pystr);
     }
 
-    Hunspell_free_list(self->handle, &slist, num_slist);
+    self->handle->free_list(&slist, num_slist);
     return slist_list;
 }
 
@@ -193,7 +194,7 @@ HunSpell_stem(HunSpell * self, PyObject *args)
     if (!slist_list) {
         return NULL;
     }
-    num_slist = Hunspell_stem(self->handle, &slist, word);
+    num_slist = self->handle->stem(&slist, word);
     PyMem_Free(word);
 
     for (i = 0, ret = 0; !ret && i < num_slist; i++) {
@@ -204,7 +205,7 @@ HunSpell_stem(HunSpell * self, PyObject *args)
         Py_DECREF(pystr);
     }
 
-    Hunspell_free_list(self->handle, &slist, num_slist);
+    self->handle->free_list(&slist, num_slist);
     return slist_list;
 }
 
@@ -222,7 +223,7 @@ HunSpell_generate(HunSpell * self, PyObject *args)
     if (!slist_list) {
         return NULL;
     }
-    num_slist = Hunspell_generate(self->handle, &slist, word1, word2);
+    num_slist = self->handle->generate(&slist, word1, word2);
     PyMem_Free(word1);
     PyMem_Free(word2);
 
@@ -234,7 +235,7 @@ HunSpell_generate(HunSpell * self, PyObject *args)
         Py_DECREF(pystr);
     }
 
-    Hunspell_free_list(self->handle, &slist, num_slist);
+    self->handle->free_list(&slist, num_slist);
     return slist_list;
 }
 
@@ -253,7 +254,7 @@ HunSpell_generate2(HunSpell * self, PyObject *args)
         return NULL;
     }
 
-    num_slist = Hunspell_generate2(self->handle, &slist, word1, &desc, 1);
+    num_slist = self->handle->generate(&slist, word1, &desc, 1);
     PyMem_Free(word1);
     PyMem_Free(desc);
 
@@ -265,7 +266,7 @@ HunSpell_generate2(HunSpell * self, PyObject *args)
         Py_DECREF(pystr);
     }
 
-    Hunspell_free_list(self->handle, &slist, num_slist);
+    self->handle->free_list(&slist, num_slist);
     return slist_list;
 }
 
@@ -277,7 +278,7 @@ HunSpell_add(HunSpell * self, PyObject *args)
 
     if (!PyArg_ParseTuple(args, "et", self->encoding, &word))
         return NULL;
-    retvalue = Hunspell_add(self->handle, word);
+    retvalue = self->handle->add(word);
     PyMem_Free(word);
 
     return PyLong_FromLong(retvalue);
@@ -291,7 +292,7 @@ HunSpell_add_with_affix(HunSpell * self, PyObject *args)
 
     if (!PyArg_ParseTuple(args, "etet", self->encoding, &word, self->encoding, &example))
         return NULL;
-    retvalue = Hunspell_add_with_affix(self->handle, word, example);
+    retvalue = self->handle->add_with_affix(word, example);
     PyMem_Free(word);
     PyMem_Free(example);
 
@@ -306,7 +307,7 @@ HunSpell_remove(HunSpell * self, PyObject *args)
 
     if (!PyArg_ParseTuple(args, "et", self->encoding, &word))
         return NULL;
-    retvalue = Hunspell_remove(self->handle, word);
+    retvalue = self->handle->remove(word);
     PyMem_Free(word);
 
     return PyLong_FromLong(retvalue);
@@ -485,43 +486,22 @@ static struct PyModuleDef hunspellmodule = {
 /******************** Module Initialization function ****************/
 
 #if PY_MAJOR_VERSION >= 3
-PyObject*
+PyMODINIT_FUNC
 PyInit_hunspell(void)
 {
     PyObject *mod;
-
-    /* Create the module */
     mod = PyModule_Create(&hunspellmodule);
-    if (mod == NULL) {
-        return NULL;
-    }
-
-    /* Fill in some slots in the type, and make it ready */
-    HunSpellType.tp_new = PyType_GenericNew;
-    if (PyType_Ready(&HunSpellType) < 0) {
-        return NULL;
-    }
-    /* Add the type to the module. */
-    Py_INCREF(&HunSpellType);
-    PyModule_AddObject(mod, "HunSpell", (PyObject *)&HunSpellType);
-    HunSpellError = PyErr_NewException("hunspell.HunSpellError", NULL, NULL);
-    Py_INCREF(HunSpellError);
-    PyModule_AddObject(mod, "HunSpellError", HunSpellError);
-    return mod;
-}
 #else
-PyObject*
+extern "C" PyObject*
 inithunspell(void)
 {
     PyObject *mod;
-
-    /* Create the module */
     mod = Py_InitModule3("hunspell", NULL,
                          "An extension for the Hunspell spell checker engine");
+#endif
     if (mod == NULL) {
         return NULL;
     }
-
     /* Fill in some slots in the type, and make it ready */
     HunSpellType.tp_new = PyType_GenericNew;
     if (PyType_Ready(&HunSpellType) < 0) {
@@ -530,9 +510,8 @@ inithunspell(void)
     /* Add the type to the module. */
     Py_INCREF(&HunSpellType);
     PyModule_AddObject(mod, "HunSpell", (PyObject *)&HunSpellType);
-    HunSpellError = PyErr_NewException("hunspell.HunSpellError", NULL, NULL);
+    HunSpellError = PyErr_NewException((char*) "hunspell.HunSpellError", NULL, NULL);
     Py_INCREF(HunSpellError);
     PyModule_AddObject(mod, "HunSpellError", HunSpellError);
     return mod;
 }
-#endif
