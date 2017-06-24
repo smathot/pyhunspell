@@ -22,12 +22,12 @@ class HunSpellTest(unittest.TestCase):
 
     def test_hunspell_suggest(self):
         self.assertEqual(self.hunspell.suggest('dpg'),
-                         [b'dog', b'pg', b'deg', b'dig', b'dpt',
-                          b'dug', b'mpg', b'd pg', b'GDP',
-                          b'DP', b'PG', b'DTP', b'dip'])
+                         ['dog', 'pg', 'deg', 'dig', 'dpt',
+                          'dug', 'mpg', 'd pg', 'GDP',
+                          'DP', 'PG', 'DTP', 'dip'])
         self.assertEqual(self.hunspell.suggest('spookie'),
-                         [b'spookier', b'spookiness', b'spook', b'cookie',
-                          b'bookie', b'Spokane', b'spoken'])
+                         ['spookier', 'spookiness', 'spook', 'cookie',
+                          'bookie', 'Spokane', 'spoken'])
 
     def test_hunspell_stem(self):
         self.assertEqual(self.hunspell.stem('dog'), [b'dog'])

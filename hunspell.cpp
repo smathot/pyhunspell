@@ -165,7 +165,7 @@ HunSpell_suggest(HunSpell * self, PyObject *args)
     PyMem_Free(word);
 
     for (i = 0, ret = 0; !ret && i < num_slist; i++) {
-        pystr = PyBytes_FromString(slist[i]);
+        pystr = PyUnicode_FromString(slist[i]);
         if (!pystr)
             break;
         ret = PyList_Append(slist_list, pystr);
