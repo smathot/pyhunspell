@@ -17,6 +17,7 @@ addons:
     packages:
       - hunspell
       - hunspell-en-us
+      - hunspell-fr
       - libhunspell-dev
       - myspell-en-gb
 

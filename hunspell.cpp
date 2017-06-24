@@ -1,5 +1,4 @@
-//http://python.jpvweb.com/python/mesrecettespython/doku.php?id=exemple_python_cpp
-/*  hunspell.c
+/*  hunspell.cpp
  *
  *  Copyright (C) 2009 - Sayamindu Dasgupta <sayamindu@gmail.com>
  *
@@ -102,6 +101,33 @@ HunSpell_dealloc(HunSpell * self)
 }
 
 static PyObject *
+HunSpell_add_dic(HunSpell * self, PyObject *args, PyObject *kwds)
+{
+    PyObject *dpath = NULL; /* PyBytes in py3 PyString in py2 */
+    FILE *fh;
+#if PY_VERSION_HEX < 0x03010000
+    const char * dpath_ptr = NULL;
+    if (!PyArg_ParseTuple(args, "et", Py_FileSystemDefaultEncoding, &dpath_ptr))
+        return NULL;
+    dpath = PyString_FromString(dpath_ptr);
+#else
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_FSConverter, &dpath))
+        return NULL;
+#endif
+    fh = fopen(PyBytes_AsString(dpath), "r");
+    if (fh) {
+        fclose(fh);
+    } else {
+        PyErr_SetFromErrno(HunSpellError);
+        Py_DECREF(dpath);
+        return NULL;
+    }
+    int result = self->handle->add_dic(PyBytes_AsString(dpath));
+    Py_DECREF(dpath);
+    return PyLong_FromLong(result);
+}
+
+static PyObject *
 HunSpell_get_dic_encoding(HunSpell * self, PyObject *args)
 {
     return Py_BuildValue("s", self->encoding);
@@ -117,7 +143,6 @@ HunSpell_spell(HunSpell * self, PyObject *args)
         return NULL;
     retvalue = self->handle->spell(word);
     PyMem_Free(word);
-
     return PyBool_FromLong(retvalue);
 }
 
@@ -320,6 +345,18 @@ static PyMethodDef HunSpell_methods[] = {
      "Returns\n"
      "-------\n"
      "string : The encoding of currently used dic file (UTF-8, ISO8859-1, ...)"},
+
+    {"add_dic", (PyCFunction) HunSpell_add_dic, METH_VARARGS,
+     "Load an extra dictionary to the current instance.\n"
+     "The  extra dictionaries use the affix file of the allocated Hunspell object.\n"
+     "Maximal number of the extra dictionaries is limited in the Hunspell source code to 20.\n\n"
+     "Parameters\n"
+     "----------\n"
+     "dpath : string\n"
+     "    Path to the .dic to add.\n\n"
+     "Returns\n"
+     "-------\n"
+     "int : hunspell program error code."},
 
     {"spell", (PyCFunction) HunSpell_spell, METH_VARARGS,
      "Checks the spelling of the given word.\n\n"

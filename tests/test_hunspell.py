@@ -1,6 +1,6 @@
 import os
 import unittest
-from hunspell import HunSpell
+from hunspell import HunSpell, HunSpellError
 
 
 class HunSpellTest(unittest.TestCase):
@@ -44,6 +44,15 @@ class HunSpellTest(unittest.TestCase):
         self.assertTrue(self.hunspell.spell('pipo'))
         self.hunspell.remove('pipo')
         self.assertFalse(self.hunspell.spell('pipo'))
+
+    def test_add_dic(self):
+        self.assertFalse(self.hunspell.spell("dictionnaire"))
+        try:
+            self.hunspell.add_dic("/usr/share/hunspell/fr.dic")
+        except HunSpellError:
+            raise ValueError("/usr/share/hunspell/fr.dic is not installed. "
+                             "Please install hunspell-fr to validate this test.")
+        self.assertTrue(self.hunspell.spell("dictionnaire"))
 
 
 class HunSpellGenerateTest(unittest.TestCase):
