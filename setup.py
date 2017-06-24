@@ -38,7 +38,7 @@ else:
 main = Extension('hunspell', **main_module_kwargs)
 
 setup(name="hunspell",
-      version="0.4.1",
+      version="0.5.0",
       description="Module for the Hunspell spellchecker engine",
       author="Benoît Latinier",
       author_email="benoit@latinier.fr",
