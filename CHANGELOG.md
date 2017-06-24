@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.5.0 (2016-06-30)
+### New features
+- A binding to `add_dic` allowing to load another dic in a hunspell instance (useful for technical terms, e.g, medical dictionary) (issue #30 & #2)
+
+### Improvements
+- **Breaking change**: `suggest` no longer returns a list of bytes. It now returns a list of unicode. (issue #24)
+- Add license files in pypi tarball (issue #28)
+
+### Note
+- Adding the `add_dic` binding required to rewrite the binding in C++. There should be no change of the lib behavior however.
+
 ## 0.4.1 (2016-03-31)
 ### Improvement
 - Exception HunSpellError now exists and is catchable (issue #21)
