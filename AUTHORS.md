@@ -1,4 +1,5 @@
 # Contributors
+- Adam Bittlingmayer ([@bittlingmayer](https://github.com/bittlingmayer))
 - Antoine Fontaine ([@MDziwny](https://github.com/MDziwny))  <a.fontaine@jurismarches.com>
 - arunbala ([@arunbala](https://github.com/arunbala))  <arunprakashb@yahoo.com>
 - Benjamin Drung ([@bdrung](https://github.com/bdrung))  <bdrung@debian.org>

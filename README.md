@@ -64,6 +64,14 @@ True
 False
 ```
 
+# Troubleshooting
+
+On MacOS Sierra with python 3.5 you can come across this error:
+```
+fatal error: /Applications/XXX-bla-bla-bla-XXX/usr/bin/lipo: can't figure out the architecture type of: /var/folders/bla-bla-bla/XXX.out
+```
+It might be solved by doing `brew unlink apple-gcc42`. See #31 and regebro/hovercraft#80.
+
 # Misc
 
 Saw a bug ? Wan't a feature ? Go fill an issue [here](https://github.com/blatinier/pyhunspell/issues)
