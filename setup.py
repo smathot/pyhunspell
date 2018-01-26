@@ -32,7 +32,7 @@ if platform.system() == "Windows":
 else:
     main_module_kwargs['macros'] = [('_LINUX', None)]
     main_module_kwargs['libraries'] = ['hunspell']
-    main_module_kwargs['include_dirs'] = '/usr/include/hunspell',
+    main_module_kwargs['include_dirs'] = ['/usr/include/hunspell', '/usr/local/Cellar/hunspell/1.6.2/include/hunspell'],
     main_module_kwargs['compile_args'] = ['-Wall']
 
 main = Extension('hunspell', **main_module_kwargs)
