@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.1 (2018-01-31)
+### Bug fixes
+- Fix Installation fail on OSX (issue #33)
+
 ## 0.5.0 (2016-06-30)
 ### New features
 - A binding to `add_dic` allowing to load another dic in a hunspell instance (useful for technical terms, e.g, medical dictionary) (issue #30 & #2)
