@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.2 (2018-02-01)
+### Bug fixes
+- Fix installation on linux broken by 0.5.1
+
 ## 0.5.1 (2018-01-31)
 ### Bug fixes
 - Fix Installation fail on OSX (issue #33)
