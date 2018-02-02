@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.3 (2018-02-02)
+### Improvements
+- Use only setuptools to build package, allows integration with conda
+
 ## 0.5.2 (2018-02-01)
 ### Bug fixes
 - Fix installation on linux broken by 0.5.1
