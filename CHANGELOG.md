@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.4 (???)
+### Bug fixes
+- Fix a memory leak at instanciation (issue #39 fixed by @Far3t)
+
 ## 0.5.3 (2018-02-02)
 ### Improvements
 - Use only setuptools to build package, allows integration with conda

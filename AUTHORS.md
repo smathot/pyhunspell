@@ -5,6 +5,7 @@
 - Benjamin Drung ([@bdrung](https://github.com/bdrung))  <bdrung@debian.org>
 - Benoît Latinier ([@blatinier](https://github.com/blatinier))  <benoit@latinier.fr> (**Owner**)
 - Denes Lados ([@mimrock](https://github.com/mimrock)) <mimrock@users.noreply.github.com>
+- Fabien Bourrel ([@Far3t](https://github.com/Far3t)) <fabien@bourrel.me>
 - Leif Arne Storset (([@lastorset](https://github.com/lastorset)) <leifarne@storset.net>
 - Marios Zindilis ([@marios-zindilis](https://github.com/marios-zindilis))  <marios@zindilis.com>
 - Mateusz Korniak ([@matkor](https://github.com/matkor))  <mateusz-lists@ant.gliwice.pl>
