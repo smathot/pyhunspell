@@ -152,8 +152,9 @@ static PyObject *
 HunSpell_suggest(HunSpell * self, PyObject *args)
 {
     char *word, **slist;
-    int i, num_slist, ret;
+    int i, num_slist, ret, str_size;
     PyObject *slist_list, *pystr;
+    PyObject *etype, *evalue, *etrace;
 
     if (!PyArg_ParseTuple(args, "et", self->encoding, &word))
         return NULL;
@@ -166,9 +167,15 @@ HunSpell_suggest(HunSpell * self, PyObject *args)
     PyMem_Free(word);
 
     for (i = 0, ret = 0; !ret && i < num_slist; i++) {
-        pystr = PyUnicode_FromString(slist[i]);
-        if (!pystr)
-            break;
+        str_size = strlen(slist[i]);
+        pystr = PyUnicode_DecodeUTF8(slist[i], str_size, "strict");
+        if (!pystr) {
+            PyErr_Fetch(&etype, &evalue, &etrace);
+            Py_DECREF(etype);
+            pystr = PyUnicode_DecodeLatin1(slist[i], str_size, "strict");
+            if (!pystr)
+                break;
+        }
         ret = PyList_Append(slist_list, pystr);
         Py_DECREF(pystr);
     }

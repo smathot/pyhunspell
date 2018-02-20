@@ -3,6 +3,7 @@
 ## 0.5.4 (???)
 ### Bug fixes
 - Fix a memory leak at instanciation (issue #39 fixed by @Far3t)
+- Fix an encoding problem (issue #32)
 
 ## 0.5.3 (2018-02-02)
 ### Improvements

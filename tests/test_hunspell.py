@@ -1,3 +1,4 @@
+#-*- coding: utf-8 -*-
 import os
 import unittest
 from hunspell import HunSpell, HunSpellError
@@ -28,6 +29,9 @@ class HunSpellTest(unittest.TestCase):
         self.assertEqual(self.hunspell.suggest('spookie'),
                          ['spookier', 'spookiness', 'spook', 'cookie',
                           'bookie', 'Spokane', 'spoken'])
+        self.assertEqual(self.hunspell.suggest('Eelysa'),
+                         ['Elyssa', 'Elysees', 'Elysha', 'Elysia',
+                          'Elissa', 'Elysée'])
 
     def test_hunspell_stem(self):
         self.assertEqual(self.hunspell.stem('dog'), [b'dog'])
