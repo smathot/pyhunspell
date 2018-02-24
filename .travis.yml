@@ -1,0 +1,29 @@
+sudo: false
+language: python
+python:
+  - "2.6"
+  - "2.7"
+  - "3.2"
+  - "3.3"
+  - "3.4"
+  - "3.5"
+  - "3.6"
+  - "nightly"
+  - "pypy"
+
+# command to system install dependencies
+addons:
+  apt:
+    packages:
+      - hunspell
+      - hunspell-en-us
+      - hunspell-fr
+      - libhunspell-dev
+      - myspell-en-gb
+
+install:
+  - pip install nose
+  - pip install .
+
+# command to run tests
+script: nosetests tests
