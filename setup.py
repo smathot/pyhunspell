@@ -47,8 +47,9 @@ else:
 main = Extension('hunspell', **main_module_kwargs)
 
 setup(name="hunspell",
-      version="0.5.4",
+      version="0.5.5",
       description="Module for the Hunspell spellchecker engine",
+      long_description=open('README.md').read(),
       author="Benoît Latinier",
       author_email="benoit@latinier.fr",
       url="http://github.com/blatinier/pyhunspell",

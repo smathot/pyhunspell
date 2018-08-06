@@ -4,6 +4,7 @@
 ### Bug fixes
 - Fix a memory leak at instanciation (issue #39 fixed by @Far3t)
 - Fix an encoding problem (issue #32)
+- Use `include_path` for install
 
 ## 0.5.3 (2018-02-02)
 ### Improvements

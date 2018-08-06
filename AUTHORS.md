@@ -9,6 +9,7 @@
 - Leif Arne Storset (([@lastorset](https://github.com/lastorset)) <leifarne@storset.net>
 - Marios Zindilis ([@marios-zindilis](https://github.com/marios-zindilis))  <marios@zindilis.com>
 - Mateusz Korniak ([@matkor](https://github.com/matkor))  <mateusz-lists@ant.gliwice.pl>
+- Petter Hohle ([@petterhh](https://github.com/petterhh))
 - Sayamindu Dasgupta  <sayamindu@gmail.com> (**Initial owner**)
 - Sebastiaan Mathot ([@smathot](https://github.com/smathot))  <s.mathot@cogsci.nl>
 - Nat Picker ([@tallforasmurf](https://github.com/tallforasmurf))  <tallforasmurf@yahoo.com>
