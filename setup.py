@@ -50,6 +50,7 @@ setup(name="hunspell",
       version="0.5.5",
       description="Module for the Hunspell spellchecker engine",
       long_description=open('README.md').read(),
+      long_description_content_type="text/markdown",  # so PyPI renders it properly
       author="Benoît Latinier",
       author_email="benoit@latinier.fr",
       url="http://github.com/blatinier/pyhunspell",
