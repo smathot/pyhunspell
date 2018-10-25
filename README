@@ -1,3 +1,6 @@
+Note: This repository is unmaintained. At the time of writing, pyhunspell is being developed at https://github.com/blatinier/pyhunspell
+
+
 ABOUT PYHUNSPELL
 ================
 Pyhunspell is a set of Python bindings for the Hunspell spellchecker engine. It
