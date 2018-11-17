@@ -70,7 +70,7 @@ It might be solved by doing `brew unlink apple-gcc42`. See #31 and regebro/hover
 
 # Misc
 
-Saw a bug ? Wan't a feature ? Go fill an issue [here](https://github.com/blatinier/pyhunspell/issues)
+Saw a bug ? Want a feature ? Go fill an issue [here](https://github.com/blatinier/pyhunspell/issues)
 
 For information, version naming (introduced for 0.4.0) is based on Hungarian cities ordered by population except Budapest.
 The reason why is that hunspell stands for Hungarian Spell.
